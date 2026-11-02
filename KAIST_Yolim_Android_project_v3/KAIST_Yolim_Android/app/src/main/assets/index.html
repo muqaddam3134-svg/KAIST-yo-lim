@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#35118f"><meta name="description" content="KAIST yo‘lim — darslar, video mashg‘ulotlar va bilim o‘yinlari"><meta name="mobile-web-app-capable" content="yes">
+<title>KAIST yo’lim</title>
+<style>
+:root{--bg:#f4f3ff;--card:#fff;--tx:#1e1b3a;--mut:#6b6894;--pri:#6c5ce7;--ok:#00b894;--bad:#e17055;--ln:#e3e0fa;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15132b;--card:#221f42;--tx:#f1efff;--mut:#a29fc9;--ln:#35316a}}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+#app{max-width:520px;margin:0 auto;padding:16px 16px 96px}
+h1{font-size:22px;margin:4px 0}h2{font-size:18px;margin:14px 0 8px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:14px;margin:10px 0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pill{background:var(--card);border:1px solid var(--ln);border-radius:99px;padding:4px 10px;font-size:14px;white-space:nowrap}
+.bar{height:10px;background:var(--ln);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),#a29bfe)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{flex:1;min-width:70px;text-align:center;padding:10px;border-radius:12px;border:2px solid var(--ln);background:var(--card);color:var(--tx);font-weight:700}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+button{font:inherit;cursor:pointer}
+.btn{display:block;width:100%;padding:13px;border:0;border-radius:14px;background:var(--pri);color:#fff;font-weight:700;margin-top:10px}
+.btn.alt{background:var(--card);color:var(--tx);border:2px solid var(--ln)}
+.sub{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;padding:14px;margin:8px 0;border-radius:14px;border:1px solid var(--ln);background:var(--card);color:var(--tx);font-weight:600}
+.opt{display:block;width:100%;text-align:left;padding:13px;margin:8px 0;border-radius:12px;border:2px solid var(--ln);background:var(--card);color:var(--tx)}
+.opt.ok{border-color:var(--ok);background:rgba(0,184,148,.18)}.opt.bad{border-color:var(--bad);background:rgba(225,112,85,.18)}
+.exp{background:rgba(108,92,231,.12);border-left:4px solid var(--pri);padding:10px 12px;border-radius:8px;margin-top:10px}
+.mut{color:var(--mut);font-size:14px}.big{font-size:44px;text-align:center;margin:6px 0}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--ln);display:flex;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;background:none;padding:10px 0;color:var(--mut);font-size:13px}nav button.on{color:var(--pri);font-weight:700}nav span{display:block;font-size:22px}
+code{background:var(--ln);padding:1px 5px;border-radius:5px}
+
+.videoBox{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:12px;margin:10px 0}
+.videoFrame{width:100%;aspect-ratio:16/9;border:0;border-radius:12px;background:#100b2c;margin-top:10px}
+.videoInput{width:100%;padding:12px;border:1px solid var(--ln);border-radius:11px;background:var(--bg);color:var(--tx);font:inherit;margin:8px 0}
+.gameGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.gameTile{border:1px solid var(--ln);border-radius:16px;padding:16px 10px;background:var(--card);color:var(--tx);text-align:center;font-weight:700;min-height:112px}
+.gameTile b{display:block;font-size:30px;margin-bottom:6px}
+.gameStat{font-size:14px;color:var(--mut)}
+.iqPicture{font-size:46px;letter-spacing:8px;text-align:center;padding:22px 8px;background:linear-gradient(135deg,#eee9ff,#d9f4ff);border-radius:16px;margin:10px 0;color:#24145f}.shopItem{display:flex;align-items:center;gap:12px;justify-content:space-between}.shopItem .price{white-space:nowrap;font-weight:800;color:var(--pri)}
+</style></head><body><div id="app"></div>
+<nav><button id="n0" onclick="go(0)"><span>📚</span>Darslar</button><button id="n1" onclick="go(1)"><span>🎮</span>O’yin</button><button id="n2" onclick="go(2)"><span>👤</span>Profil</button></nav>
+<script>
+const SUB=["📐 Matematika","⚡ Fizika","🇬🇧 Ingliz tili","💻 Dasturlash"];
+// D[sinf] = 4 ta fan: [dars, [savol, [variantlar], to’g’ri_indeks, tushuntirish]]
+const D={
+8:[["Pifagor teoremasi: to’g’ri burchakli uchburchakda a²+b²=c², c — gipotenuza (eng uzun tomon).",[
+["Katetlari 3 va 4 bo’lsa, gipotenuza nechaga teng?",["5","6","7","8"],0,"3²+4²=9+16=25, √25=5."],
+["2x+6=18 bo’lsa, x=?",["5","6","7","12"],1,"Avval 6 ni o’tkazamiz: 2x=12, keyin 2 ga bo’lamiz: x=6."],
+["(a+b)² nimaga teng?",["a²+b²","a²+2ab+b²","a²+ab+b²","2a+2b"],1,"Qavs kvadratida o’rtadagi 2ab ni unutmang: a²+2ab+b²."]]],
+["Tezlik = yo’l ÷ vaqt (v=s/t). Birligi m/s yoki km/soat.",[
+["120 km yo’l 2 soatda bosildi. Tezlik?",["40 km/soat","60 km/soat","80 km/soat","240 km/soat"],1,"v=120÷2=60 km/soat."],
+["36 km/soat necha m/s?",["10","36","100","3.6"],0,"km/soat dan m/s ga o’tish uchun 3.6 ga bo’linadi: 36÷3.6=10."],
+["Zichlik formulasi qaysi?",["ρ=m/V","ρ=V/m","ρ=m·V","ρ=m+V"],0,"Zichlik = massa ÷ hajm."]]],
+["Present Simple: he/she/it dan keyin fe’lga -s qo’shiladi: She plays.",[
+["He ___ football every day.",["play","plays","playing","played"],1,"He — 3-shaxs birlik, shuning uchun plays."],
+["“Library” o’zbekchada?",["kutubxona","kitob do’koni","maktab","o’quvchi"],0,"Library — kutubxona. Kitob do’koni esa bookshop."],
+["They ___ students.",["is","am","are","be"],2,"They bilan are ishlatiladi."]]],
+["Python’da print(’Salom’) ekranga yozadi. O’zgaruvchi: x = 5.",[
+["x=3; y=4; print(x+y) nima chiqaradi?",["34","7","x+y","xato"],1,"x va y sonlar, shuning uchun ular qo’shiladi: 7."],
+["Ekranga yozadigan funksiya?",["input","print","len","int"],1,"print — chiqarish, input — kiritish."],
+["print(2*3) natijasi?",["5","6","23","2*3"],1,"* — ko’paytirish belgisi: 6."]]]],
+9:[["Kvadrat tenglama ax²+bx+c=0. Diskriminant D=b²−4ac. D>0 bo’lsa 2 ta ildiz, D=0 bo’lsa 1 ta, D<0 bo’lsa ildiz yo’q.",[
+["x²−5x+6=0 ildizlari?",["2 va 3","1 va 6","−2 va −3","5 va 6"],0,"Viyet: yig’indi 5, ko’paytma 6 → 2 va 3."],
+["x²−4=0 ildizlari?",["±2","2","4","±4"],0,"x²=4, demak x=2 yoki x=−2."],
+["x²+2x+5=0 da D=?",["−16","16","4","24"],0,"D=4−20=−16. D manfiy, ildiz yo’q."]]],
+["Nyutonning 2-qonuni: F=m·a (kuch = massa × tezlanish).",[
+["m=2 kg, a=3 m/s². F=?",["5 N","6 N","1.5 N","9 N"],1,"F=2·3=6 N."],
+["Erkin tushish tezlanishi taxminan?",["9.8 m/s²","98 m/s²","0.98 m/s²","1 m/s²"],0,"g≈9.8 m/s² (hisoblashda ko’pincha 10)."],
+["Jism tinch turibdi. Unga ta’sir qiluvchi kuchlar yig’indisi?",["0","m·g","cheksiz","1"],0,"Nyutonning 1-qonuni: tinch jismda kuchlar muvozanatda, yig’indi 0."]]],
+["Past Simple: tugagan ish. Fe’lga -ed qo’shiladi yoki noto’g’ri fe’l: go → went.",[
+["Yesterday I ___ to school.",["go","goes","went","gone"],2,"Yesterday — o’tgan zamon. go ning o’tgan shakli went."],
+["“buy” ning o’tgan shakli?",["buyed","bought","buys","boughted"],1,"buy → bought (noto’g’ri fe’l)."],
+["I ___ my homework last night.",["do","did","done","doing"],1,"Last night — o’tgan zamon: did."]]],
+["for sikli takrorlaydi: for i in range(3) — i=0,1,2. if shart tekshiradi.",[
+["for i in range(3): print(i) — necha marta chiqaradi?",["2","3","4","1"],1,"0, 1, 2 — jami 3 marta."],
+[`if 5>3: print("ha") natijasi?`,["ha","hech narsa","xato","5"],0,"5>3 rost, shuning uchun ha chiqadi."],
+["range(1,4) qanday sonlarni beradi?",["1,2,3,4","1,2,3","0,1,2,3","2,3,4"],1,"Oxirgi son (4) kirmaydi: 1,2,3."]]]],
+10:[["Logarifm: log_a(b)=c ⇔ a^c=b. Asosiy ayniyat: sin²x+cos²x=1.",[
+["log₂8=?",["2","3","4","8"],1,"2³=8, demak 3."],
+["sin²x+cos²x=?",["0","1","2","sin 2x"],1,"Bu asosiy trigonometrik ayniyat: har doim 1."],
+["sin 30°=?",["1/2","√3/2","1","√2/2"],0,"sin 30°=1/2 — yodlab oling."]]],
+["Kinetik energiya Ek=mv²/2. Potensial energiya Ep=mgh.",[
+["m=2 kg, v=3 m/s. Ek=?",["6 J","9 J","18 J","3 J"],1,"Ek=2·3²/2=9 J."],
+["Energiya birligi?",["Nyuton","Joul","Vatt","Paskal"],1,"Energiya — Joul (J). Vatt — quvvat, Nyuton — kuch."],
+["m=1 kg, h=10 m, g=10. Ep=?",["10 J","100 J","1 J","1000 J"],1,"Ep=1·10·10=100 J."]]],
+["Present Perfect: have/has + V3. Natija hozirga bog’liq: I have finished.",[
+["She ___ already eaten.",["have","has","is","did"],1,"She bilan has: has eaten."],
+["Qaysi gap to’g’ri?",["I have seen him yesterday.","I saw him yesterday.","I have saw him.","I seen him."],1,"Yesterday aniq vaqt, shuning uchun Past Simple: saw."],
+["“write” ning V3 shakli?",["wrote","written","writed","writing"],1,"write–wrote–written."]]],
+["Ro’yxat (list): a=[1,2,3]. Indeks 0 dan boshlanadi: a[0]=1. len(a) — uzunlik.",[
+["a=[5,6,7]; a[1]=?",["5","6","7","1"],1,"Indeks 0 dan boshlanadi: a[0]=5, a[1]=6."],
+["len([1,2,3,4])=?",["3","4","5","1"],1,"4 ta element bor."],
+["a=[1,2]; a.append(3); a=?",["[1,2]","[1,2,3]","[3]","[1,2,3,3]"],1,"append oxiriga element qo’shadi."]]]],
+11:[["Hosila: (xⁿ)’=n·xⁿ⁻¹. Integral — hosilaga teskari amal: ∫xⁿdx=xⁿ⁺¹/(n+1)+C.",[
+["(x³)’=?",["3x²","x²","3x","x⁴/4"],0,"Daraja oldinga tushadi, o’zi 1 ga kamayadi: 3x²."],
+["∫2x dx=?",["x²+C","2+C","x+C","2x²+C"],0,"x² ning hosilasi 2x. Integralda +C ni unutmang."],
+["lim(x→0) sin x / x = ?",["0","1","∞","−1"],1,"Bu birinchi ajoyib limit: 1."]]],
+["Om qonuni: I=U/R. Quvvat: P=U·I.",[
+["U=12 V, R=4 Ω. I=?",["3 A","48 A","8 A","16 A"],0,"I=12÷4=3 A."],
+["Ketma-ket ulangan 2 Ω va 3 Ω umumiy qarshilik?",["5 Ω","1.2 Ω","6 Ω","1 Ω"],0,"Ketma-ket ulanishda qarshiliklar qo’shiladi: 5 Ω."],
+["U=10 V, I=2 A. P=?",["5 W","12 W","20 W","8 W"],2,"P=U·I=10·2=20 W."]]],
+["Shartli gaplar: If + Present, will + V (real). If + Past, would + V (xayoliy).",[
+["If it rains, we ___ at home.",["stay","will stay","stayed","would stayed"],1,"Real holat: If + Present, will + V."],
+["If I ___ rich, I would travel the world.",["am","were","will be","would be"],1,"Xayoliy holatda were ishlatiladi."],
+["“Scholarship” o’zbekchada?",["stipendiya","sertifikat","imtihon","fakultet"],0,"Scholarship — stipendiya. KAIST uchun muhim so’z!"]]],
+["Funksiya: def f(x): return x*x. Rekursiya — funksiya o’zini chaqiradi.",[
+["def f(x): return x*2. f(5)=?",["7","10","25","5"],1,"5·2=10."],
+["4! (faktorial) =?",["10","24","16","12"],1,"4·3·2·1=24."],
+["Ro’yxatda chiziqli qidiruv murakkabligi?",["O(1)","O(n)","O(n²)","O(log n)"],1,"Eng yomon holda hamma n elementni ko’rish kerak: O(n)."]]]]
+};
+const LV=["Yangi boshlovchi","Izlanuvchi","Dasturchi","Olimpiadachi","Tadqiqotchi","KAIST talabasi 🎓"];
+let S={xp:0,streak:0,last:"",g:8,done:{},wrong:[],hints:0,skips:0};
+try{Object.assign(S,JSON.parse(localStorage.getItem("kaist")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("kaist",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id), A=$("app");
+const day=d=>d.toISOString().slice(0,10);
+function touch(){const t=day(new Date()),y=day(new Date(Date.now()-864e5));if(S.last!==t){S.streak=S.last===y?S.streak+1:1;S.last=t}}
+function add(n){S.xp+=n;touch();save()}
+const lvl=()=>Math.min(LV.length-1,Math.floor(S.xp/150));
+function head(){const l=lvl(),p=(S.xp%150)/150*100;return `<div class="top"><h1>🚀 KAIST yo’lim</h1><span class="pill">🔥 ${S.streak}</span></div>
+<div class="card"><div class="top"><b>${LV[l]}</b><span class="mut">${S.xp} XP</span></div><div class="bar" style="margin-top:8px"><i style="width:${l==5?100:p}%"></i></div></div>`}
+function go(t){clearInterval(T);[0,1,2].forEach(i=>$("n"+i).classList.toggle("on",i==t));[home,game,prof][t]()}
+function home(){
+A.innerHTML=head()+`<button class="btn" onclick="course()">🌱 0 dan boshlash: boshlang’ich kurs</button><div class="chips" style="margin-top:12px">${[8,9,10,11].map(g=>`<button class="chip ${S.g==g?"on":""}" onclick="S.g=${g};save();home()">${g}-sinf</button>`).join("")}</div><h2>Fanni tanlang</h2>`+
+SUB.map((s,i)=>{const b=S.done[S.g+"-"+i];return `<button class="sub" onclick="lesson(${i})"><span>${s}</span><span>${b==null?"▶":b==3?"⭐ 3/3":"✅ "+b+"/3"}</span></button>`}).join("")}
+function lesson(i){const d=D[S.g][i];
+A.innerHTML=`<button class="chip" onclick="home()" style="width:auto;flex:none">← Orqaga</button><h2>${SUB[i]} · ${S.g}-sinf</h2>
+<div class="card"><b>📖 Dars</b><p>${d[0]}</p></div><button class="btn" onclick="quiz(${i})">Mashqni boshlash (3 savol)</button><h2>🎬 Video darslar</h2>${vg(i)}`}
+let Q;
+function quiz(i,list,back){Q={i,list:list||D[S.g][i][1],n:0,sc:0,back:back||0};ask()}
+function ask(){const q=Q.list[Q.n];
+A.innerHTML=`<div class="top"><span class="mut">Savol ${Q.n+1}/${Q.list.length}</span><span class="pill">✅ ${Q.sc}</span></div><div class="card"><b>${q[0]}</b></div>`+
+q[1].map((o,k)=>`<button class="opt" onclick="pick(${k})">${o}</button>`).join("")+`<div id="fb"></div>`}
+function pick(k){const q=Q.list[Q.n],o=document.querySelectorAll(".opt");if(Q.lock)return;Q.lock=1;
+o.forEach((b,j)=>{b.disabled=true;if(j==q[2])b.classList.add("ok");else if(j==k)b.classList.add("bad")});
+let h;if(k==q[2]){Q.sc++;add(10);S.wrong=S.wrong.filter(w=>w[0]!=q[0]);h=`<div class="exp">🎉 To’g’ri! +10 XP</div>`}
+else{if(!S.wrong.some(w=>w[0]==q[0]))S.wrong.push(q);save();h=`<div class="exp">💡 <b>To’g’ri javob: ${q[1][q[2]]}</b><br>${q[3]}</div>`}
+$("fb").innerHTML=h+`<button class="btn" onclick="nextQ()">${Q.n+1<Q.list.length?"Keyingisi →":"Natija"}</button>`}
+function nextQ(){Q.lock=0;Q.n++;if(Q.n<Q.list.length)return ask();
+if(!Q.back){const key=S.g+"-"+Q.i;S.done[key]=Math.max(S.done[key]||0,Q.sc)}
+if(Q.cb){const[i,k]=Q.cb.split("-").map(Number),ok=Q.sc==Q.list.length;if(ok){S.c=S.c||{};S.c[Q.cb]=1;add(20)}save();
+A.innerHTML=`<div class="big">${ok?"🌱":"📖"}</div><h1 style="text-align:center">${Q.sc}/${Q.list.length}</h1><p class="mut" style="text-align:center">${ok?"Dars o’zlashtirildi! +20 XP":"Keyingi dars ochilishi uchun hammasi to’g’ri bo’lishi kerak. Darsni yana bir o’qing."}</p><button class="btn" onclick="${ok&&k<3?`cLesson(${i},${k+1})`:ok?`courseSub(${i})`:`cLesson(${i},${k})`}">${ok&&k<3?"Keyingi dars →":ok?"Kursga qaytish":"Darsni qayta o’qish"}</button>`;return}
+if(Q.sc==Q.list.length)add(20);save();
+A.innerHTML=`<div class="big">${Q.sc==Q.list.length?"🏆":"💪"}</div><h1 style="text-align:center">${Q.sc}/${Q.list.length}</h1><p class="mut" style="text-align:center">${Q.sc==Q.list.length?"Mukammal! +20 XP bonus":"Xatolar ustida ishlash — o’sishning yo’li."}</p><button class="btn" onclick="go(${Q.back?2:0})">Davom etish</button>`}
+// 0 dan boshlash kursi: har fan 4 dars, har darsda 2 savol
+const C=[
+[["Sonlar va amallar tartibi","Butun sonlar: ..., −2, −1, 0, 1, 2, ... Manfiy son nolning chap tomonida turadi.<br>Qo’shish: 5 + (−3) = 2.<br>Minus × minus = plyus: (−2)×(−4) = 8.<br><b>Amallar tartibi:</b> avval qavs, keyin ko’paytirish va bo’lish, oxirida qo’shish va ayirish.<br>Misol: 2 + 3×4 = 2 + 12 = 14.",[["2 + 3×4 = ?",["20","14","24","9"],1,"Avval ko’paytirish: 3×4=12, keyin 2+12=14."],["(−3) × (−2) = ?",["6","−6","5","−5"],0,"Minus × minus = plyus, demak 6."],["10 − 4 ÷ 2 = ?",["3","8","5","7"],1,"Avval bo’lish: 4÷2=2, keyin 10−2=8."],["−5 + 8 = ?",["3","−3","13","−13"],0,"Nol chizig’idan 5 chapga, keyin 8 o’ngga: natija 3."]]],
+["Kasr va foiz","Kasr — butunning bo’lagi: 1/2 yarim degani.<br>Maxraji bir xil kasrlarni qo’shsak, faqat suratlar qo’shiladi: 1/5 + 2/5 = 3/5.<br><b>Foiz</b> — 100 dan bir qism: 50% = 1/2, 25% = 1/4.<br>Foizni topish: 20% ni olish uchun 0.2 ga ko’paytiring.",[["1/4 + 2/4 = ?",["3/8","3/4","2/4","1/2"],1,"Maxraj o’zgarmaydi, suratlar qo’shiladi: 3/4."],["200 ning 25% i nechta?",["25","50","75","100"],1,"25% = 1/4. 200÷4 = 50."]]],
+["Tenglamalar","Tenglama — noma’lum x li tenglik. Asosiy qoida: tenglikning ikkala tomoniga bir xil amal qilinadi.<br>x + 5 = 12 → ikki tomondan 5 ayiramiz: x = 7.<br>3x = 15 → ikki tomonni 3 ga bo’lamiz: x = 5.",[["x + 9 = 20 bo’lsa, x = ?",["11","29","10","9"],0,"20 − 9 = 11."],["4x = 28 bo’lsa, x = ?",["24","7","32","112"],1,"Ikki tomonni 4 ga bo’lamiz: 28÷4 = 7."]]],
+["Daraja va ildiz","a² = a·a. Masalan 5² = 25, 2³ = 2·2·2 = 8.<br>Kvadrat ildiz darajaga teskari: √25 = 5, chunki 5² = 25.<br>Har qanday sonning 0-darajasi 1 ga teng: a⁰ = 1.",[["3³ = ?",["9","27","6","81"],1,"3·3·3 = 27."],["√49 = ?",["6","7","8","9"],1,"7·7 = 49."]]]],
+[["Birliklar","Fizika — tabiat qonunlari haqidagi fan. Hamma narsa o’lchanadi:<br>uzunlik — metr (m), massa — kilogramm (kg), vaqt — sekund (s).<br>1 km = 1000 m, 1 soat = 3600 s.",[["2 km necha metr?",["20","200","2000","20000"],2,"1 km = 1000 m, demak 2000 m."],["Massa birligi qaysi?",["metr","kilogramm","sekund","Nyuton"],1,"Massa kilogrammda o’lchanadi."],["3000 m necha km?",["3","30","300","0.3"],0,"1000 m = 1 km, demak 3000 m = 3 km."],["1 soat necha sekund?",["60","360","3600","36000"],2,"60 daqiqa × 60 sekund = 3600 s."]]],
+["Harakat va tezlik","Tezlik — vaqt birligida bosilgan yo’l: v = s / t.<br>Yo’l: s = v · t.<br>Misol: 10 m/s tezlik bilan 5 s yursangiz, 50 m bosasiz.",[["v = 5 m/s, t = 4 s. Yo’l s = ?",["9 m","20 m","1.25 m","0.8 m"],1,"s = v·t = 5·4 = 20 m."],["100 m ni 20 s da bosdi. Tezlik?",["5 m/s","2000 m/s","80 m/s","0.2 m/s"],0,"v = 100÷20 = 5 m/s."]]],
+["Kuch","Kuch jismning tezligini yoki shaklini o’zgartiradi. Birligi — Nyuton (N).<br>Og’irlik kuchi: F = m·g, bunda g ≈ 10 m/s².<br>3 kg li jismning og’irligi 30 N.",[["m = 5 kg bo’lsa, og’irlik kuchi (g=10)?",["5 N","15 N","50 N","0.5 N"],2,"F = 5·10 = 50 N."],["Kuch birligi qaysi?",["Joul","Nyuton","Vatt","Metr"],1,"Kuch Nyutonda o’lchanadi."]]],
+["Bosim","Bosim kuchning yuzaga nisbati: p = F / S. Birligi — Paskal (Pa).<br>Yuza kichik bo’lsa, bosim katta bo’ladi. Shuning uchun o’tkir pichoq yaxshi kesadi.",[["F = 100 N, S = 2 m². Bosim p = ?",["200 Pa","50 Pa","102 Pa","0.02 Pa"],1,"p = 100÷2 = 50 Pa."],["Nega o’tkir pichoq yaxshi kesadi?",["Yuzasi kichik, bosimi katta","Og’ir bo’lgani uchun","Issiq bo’lgani uchun","Tez bo’lgani uchun"],0,"Bir xil kuch kichik yuzaga tushsa, bosim ortadi."]]]],
+[["To be fe’li","I am, you are, he/she/it is, we/you/they are.<br>I am a student. She is a teacher. We are friends.",[["I ___ a student.",["is","am","are","be"],1,"I bilan faqat am ishlatiladi."],["We ___ friends.",["is","am","are","be"],2,"We, you, they bilan are."],["She ___ a doctor.",["am","is","are","be"],1,"She, he, it bilan is ishlatiladi."],["They ___ at home.",["is","am","are","be"],2,"They bilan are."]]],
+["Salomlashish","Hello! — Salom!<br>How are you? — Ahvolingiz qanday?<br>My name is Ali. — Mening ismim Ali.<br>Nice to meet you. — Tanishganimdan xursandman.",[["“How are you?” nima degani?",["Isming nima?","Ahvolingiz qanday?","Qayerdansan?","Necha yoshdasan?"],1,"How are you? — hol-ahvol so’rash."],["“Nice to meet you” nima degani?",["Xayr","Rahmat","Tanishganimdan xursandman","Kechirasiz"],2,"Yangi tanishganda aytiladi."]]],
+["A / an va ko’plik","<b>a</b> — undosh tovushdan oldin: a book. <b>an</b> — unli tovushdan oldin: an apple.<br>Ko’plik: book → books, box → boxes, child → children.",[["I have ___ apple.",["a","an","many","two"],1,"Apple unli tovush bilan boshlanadi, shuning uchun an."],["“child” ning ko’pligi?",["childs","childen","children","childes"],2,"child → children (maxsus shakl)."]]],
+["Have va like","I have a book. She has a cat (he/she/it bilan has).<br>I like pizza. He likes tea.<br>go — bormoq, eat — yemoq, read — o’qimoq.",[["She ___ a cat.",["have","has","haves","having"],1,"She bilan has ishlatiladi."],["“go” nima degani?",["bormoq","kelmoq","yemoq","o’qimoq"],0,"go — bormoq."]]]],
+[["Dastur nima?","Dastur — kompyuterga berilgan ketma-ket buyruqlar. Biz Python tilidan boshlaymiz.<br><code>print(’Salom’)</code> ekranga Salom deb yozadi.<br>Buyruqlar yuqoridan pastga qarab birin-ketin bajariladi.",[["Python’da ekranga yozish buyrug’i?",["show","print","write","say"],1,"Ekranga chiqarish uchun print ishlatiladi."],["Buyruqlar qanday tartibda bajariladi?",["Pastdan yuqoriga","Tasodifiy","Yuqoridan pastga","Faqat oxirgisi"],2,"Dastur tepadan pastga o’qiladi."],["print(5+2) nima chiqaradi?",["52","7","5+2","xato"],1,"Python avval hisoblaydi: 5+2=7."],["Python nima?",["Dasturlash tili","Rasm dasturi","O’yin","Brauzer"],0,"Python — kompyuterga buyruq berish uchun dasturlash tili."]]],
+["O’zgaruvchilar","O’zgaruvchi — qiymat saqlaydigan quti.<br><code>a = 7</code> (son), <code>ism = ’Ali’</code> (matn, qo’shtirnoq ichida).<br><code>a = a + 1</code> bo’lsa, a endi 8 ga teng.",[["a = 2; a = a + 3; print(a) nima chiqaradi?",["2","3","5","23"],2,"a=2, keyin a=2+3=5."],["Matn qanday yoziladi?",["Qo’shtirnoq ichida","Qavs ichida","Hech narsasiz","Kvadrat qavsda"],0,"Matn har doim qo’shtirnoq ichida yoziladi."]]],
+["Kiritish va amallar","<code>n = int(input())</code> foydalanuvchidan son oladi.<br>Amallar: + − * / , <code>**</code> daraja, <code>%</code> qoldiq.<br>7 % 3 = 1 (7 ni 3 ga bo’lsak, qoldiq 1). 2 ** 3 = 8.",[["7 % 3 = ?",["2","1","0","3"],1,"7 = 3·2 + 1, qoldiq 1."],["2 ** 3 = ?",["6","5","8","9"],2,"** — daraja: 2·2·2 = 8."]]],
+["Shart (if)","if shart: bajariladi, aks holda else: bajariladi.<br>Taqqoslash: <code>==</code> teng, <code>!=</code> teng emas, &lt; kichik, &gt; katta.<br>Misol: if yosh &gt;= 18: print(’katta’)",[["3 == 3 natijasi?",["Rost (True)","Yolg’on (False)","Xato","3"],0,"3 haqiqatan 3 ga teng, natija True."],["Qaysi belgi “teng emas” degani?",["==","!=","=","+="],1,"!= — teng emas. Bitta = esa qiymat berish."]]]]
+];
+function course(){const c=S.c||{};A.innerHTML=head()+`<h2>🌱 0 dan boshlash</h2><p class="mut">Har fan 4 ta kichik darsdan iborat. Darsni o’qing, 2 ta savolga to’g’ri javob bering, keyingi dars ochiladi.</p>`+SUB.map((s,i)=>{const n=[0,1,2,3].filter(k=>c[i+"-"+k]).length;return `<button class="sub" onclick="courseSub(${i})"><span>${s}</span><span>${n}/4</span></button>`}).join("")+`<button class="btn alt" onclick="home()">← Sinflar bo’yicha mashqlar</button>`}
+function courseSub(i){const c=S.c||{};A.innerHTML=`<button class="chip" onclick="course()" style="width:auto;flex:none">← Orqaga</button><h2>${SUB[i]}</h2>`+C[i].map((l,k)=>{const open=k==0||c[i+"-"+(k-1)];return `<button class="sub" ${open?`onclick="cLesson(${i},${k})"`:"disabled style=\"opacity:.5\""}><span>${k+1}. ${l[0]}</span><span>${c[i+"-"+k]?"✅":open?"▶":"🔒"}</span></button>`}).join("")}
+function cLesson(i,k,s){const l=C[i][k],p=l[1].split("<br>");s=s||0;const last=s==p.length-1;A.innerHTML=`<button class="chip" onclick="courseSub(${i})" style="width:auto;flex:none">← Orqaga</button><h2>${k+1}. ${l[0]}</h2><div class="top"><span class="mut">Tushuntirish ${s+1}/${p.length}</span></div><div class="bar"><i style="width:${(s+1)/p.length*100}%"></i></div><div class="card" style="font-size:18px">${p[s]}</div>${last?`<button class="btn" onclick="cStart(${i},${k})">📝 Testni boshlash (${l[2].length} savol)</button>`:`<button class="btn" onclick="cLesson(${i},${k},${s+1})">Keyingisi →</button>`}${s?`<button class="btn alt" onclick="cLesson(${i},${k},${s-1})">← Oldingisi</button>`:""}<h2>🎬 Video darslar</h2>${vids(i,k)}`}
+function cStart(i,k){quiz(0,C[i][k][2],2);Q.cb=i+"-"+k}
+const FAN=["matematika","fizika","ingliz tili","python dasturlash"],EN4=["math","physics","english grammar","python programming"];
+const EN=[["order of operations negative numbers","fractions and percentages","solving equations basics","exponents and square roots"],["units of measurement physics","speed distance time","force and weight physics","pressure physics"],["verb to be","english greetings introductions","a an articles plurals","have has like present simple"],["what is a program python for beginners","python variables","python input and operators","python if statements"]];
+const yt=q=>"https://www.youtube.com/results?search_query="+encodeURIComponent(q);
+const lk=(h,t)=>`<a class="btn alt" style="text-decoration:none;text-align:center" target="_blank" rel="noopener" href="${h}">${t}</a>`;
+function videoPanel(q){const saved=localStorage.getItem("kaistVideoUrl")||"";return `<div class="videoBox"><b>▶️ Video dars — sayt ichida ko‘rish</b><p class="mut">YouTube video havolasini kiriting. Video shu sahifaning ichida ochiladi.</p><input id="videoUrl" class="videoInput" type="url" placeholder="https://www.youtube.com/watch?v=..." value="${saved.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}"><button class="btn" onclick="playVideo()">▶ Videoni ko‘rish</button><div id="videoPlayer"></div><button class="btn alt" onclick="window.open(yt(${JSON.stringify(q)}), '_blank')">YouTube’dan shu mavzuni qidirish</button></div>`}
+function playVideo(){const raw=$("videoUrl").value.trim();const m=raw.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/))([\w-]{11})/);if(!m){alert("YouTube video havolasini to‘g‘ri kiriting.");return}localStorage.setItem("kaistVideoUrl",raw);$("videoPlayer").innerHTML=`<iframe class="videoFrame" src="https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=1&rel=0" title="Video dars" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`}
+function vids(i,k){const t=C[i][k][0];return videoPanel(t+" "+FAN[i]+" dars o‘zbek tilida")}
+function vg(i){return videoPanel(FAN[i]+" "+S.g+"-sinf dars o‘zbek tilida")}
+let T,G;
+function game(){A.innerHTML=head()+`<h2>🎮 O‘yinlar markazi</h2><p class="mut">Bilimingizni o‘yin orqali mustahkamlang va XP to‘plang.</p><div class="card top"><b>🪙 XP hamyon</b><b>${S.xp} XP</b></div><div class="gameGrid"><button class="gameTile" onclick="mathGame()"><b>⚡</b>Tez hisob<span class="gameStat">45 soniya</span></button><button class="gameTile" onclick="memoryGame()"><b>🧠</b>Xotira o‘yini<span class="gameStat">Juftliklarni toping</span></button><button class="gameTile" onclick="trueFalseGame()"><b>✅</b>Rost yoki yolg‘on<span class="gameStat">Bilimingizni sinang</span></button><button class="gameTile" onclick="typingGame()"><b>⌨️</b>Tez yozish<span class="gameStat">Python va inglizcha</span></button><button class="gameTile" onclick="reactionGame()"><b>🚀</b>Reaksiya testi<span class="gameStat">Tezligingizni o‘lchang</span></button><button class="gameTile" onclick="iqGame()"><b>🧩</b>IQ test<span class="gameStat">Rasmli mantiqiy savollar</span></button><button class="gameTile" onclick="xpShop()"><b>🛍️</b>XP do‘koni<span class="gameStat">XP sarflab yordam oling</span></button></div>`}
+function mathGame(){A.innerHTML=head()+`<div class="card"><h2>⚡ Tez hisob</h2><p>45 soniyada iloji boricha ko‘p misol yeching. Har xato 2 soniya ayiradi.</p><button class="btn" onclick="gstart()">Boshlash</button></div><button class="btn alt" onclick="game()">← O‘yinlar</button>`} 
+const TF=[['Quyosh yulduz hisoblanadi.',1,'Quyosh — o‘zidan nur tarqatadigan yulduz.'],['Python’da print() ekranga chiqaradi.',1,'print() ma’lumotni ekranga chiqaradi.'],['1 kilometr 100 metrga teng.',0,'1 kilometr = 1000 metr.'],['Suvning kimyoviy formulasi H₂O.',1,'Suv ikki vodorod va bir kislorod atomidan tuzilgan.'],['F=ma Nyutonning ikkinchi qonuni.',1,'Kuch massa va tezlanish ko‘paytmasiga teng.'],['HTML dasturlash tili hisoblanadi.',0,'HTML — belgilash tili.'],['Yer Quyosh atrofida aylanadi.',1,'Yer Quyosh atrofida orbitada harakatlanadi.'],['2 ning 5-darajasi 10 ga teng.',0,'2⁵ = 32.']];let TFQ=0,TFS=0;
+function trueFalseGame(){TFQ=0;TFS=0;tfAsk()}function tfAsk(){if(TFQ>=TF.length){add(TFS*5);A.innerHTML=head()+`<div class="big">🏆</div><h2 style="text-align:center">${TFS}/${TF.length} to‘g‘ri</h2><p class="mut" style="text-align:center">+${TFS*5} XP</p><button class="btn" onclick="trueFalseGame()">Qayta o‘ynash</button><button class="btn alt" onclick="game()">O‘yinlar</button>`;return}let q=TF[TFQ];A.innerHTML=head()+`<div class="top"><span class="pill">Savol ${TFQ+1}/${TF.length}</span><span class="pill">⭐ ${TFS}</span></div><div class="card"><h2>${q[0]}</h2></div><button class="opt" onclick="tfPick(1)">✅ Rost</button><button class="opt" onclick="tfPick(0)">❌ Yolg‘on</button><div id="tfInfo"></div><button class="btn alt" onclick="game()">← O‘yinlar</button>`}function tfPick(v){let q=TF[TFQ];let ok=v===q[1];if(ok)TFS++;$("tfInfo").innerHTML=`<div class="exp">${ok?'🎉 To‘g‘ri!':'💡 Noto‘g‘ri.'} ${q[2]}</div><button class="btn" onclick="TFQ++;tfAsk()">Keyingi →</button>`}
+const MEM=['📘','📘','🧪','🧪','💻','💻','🌍','🌍','⚡','⚡','🔢','🔢'];let mem=[],opened=[],moves=0;
+function memoryGame(){mem=MEM.slice().sort(()=>Math.random()-.5);opened=[];moves=0;memoryDraw()}function memoryDraw(){A.innerHTML=head()+`<h2>🧠 Xotira o‘yini</h2><p class="mut">Bir xil belgilar juftligini toping. Yurishlar: ${moves}</p><div class="gameGrid">${mem.map((v,i)=>`<button class="gameTile" style="font-size:30px" onclick="memPick(${i})">${opened.includes(i)||opened.length===12?v:'❔'}</button>`).join('')}</div><button class="btn alt" onclick="game()">← O‘yinlar</button>`;if(opened.length===12){add(Math.max(10,60-moves));A.innerHTML+=`<div class="exp">🏆 Barcha juftliklar topildi! XP qo‘shildi.</div>`}}function memPick(i){if(opened.includes(i))return;if(opened.length%2===1){let prev=opened[opened.length-1];if(mem[prev]!==mem[i]){opened.pop();moves++}}opened.push(i);memoryDraw();if(opened.length%2===0&&mem[opened[opened.length-1]]!==mem[opened[opened.length-2]]){setTimeout(()=>{opened.splice(-2,2);memoryDraw()},650)}}
+const WORDS=['print("Salom")','Hello world','KAIST yo‘lim','for i in range(5)','I love learning'];let word='';function typingGame(){word=WORDS[Math.floor(Math.random()*WORDS.length)];A.innerHTML=head()+`<h2>⌨️ Tez yozish</h2><div class="card"><p>Quyidagi matnni aynan yozing:</p><div class="big" style="font-size:25px">${word}</div><input id="typed" class="videoInput" placeholder="Bu yerga yozing"><div id="typeMsg" class="mut"></div><button class="btn" onclick="checkTyping()">Tekshirish</button></div><button class="btn alt" onclick="game()">← O‘yinlar</button>`}function checkTyping(){let v=$("typed").value;if(v===word){add(15);$("typeMsg").textContent='Ajoyib! +15 XP';}else{$("typeMsg").textContent='Yana urinib ko‘ring.'}}
+let reactionTimer=null,reactionStart=0;function reactionGame(){A.innerHTML=head()+`<h2>🚀 Reaksiya testi</h2><div class="card"><p>Yashil rang paydo bo‘lganda tugmani iloji boricha tez bosing.</p><button id="reactBtn" class="btn" style="height:130px;background:#777" onclick="reactClick()">Kutib turing...</button><div id="reactMsg" class="big" style="font-size:24px"></div></div><button class="btn alt" onclick="game()">← O‘yinlar</button>`;let delay=1500+Math.random()*3500;reactionTimer=setTimeout(()=>{let b=$("reactBtn");if(b){b.style.background='#00b894';b.textContent='BOSING!';reactionStart=Date.now()}},delay)}function reactClick(){let b=$("reactBtn");if(!b)return;if(!reactionStart){clearTimeout(reactionTimer);$("reactMsg").textContent='Juda erta bosdingiz! Qayta urinib ko‘ring.';b.textContent='Qayta boshlash';b.onclick=reactionGame;return}let ms=Date.now()-reactionStart;$("reactMsg").textContent=ms+' ms';if(ms<350)add(20);reactionStart=0;b.textContent='Qayta sinash';b.onclick=reactionGame}
+const rnd=n=>Math.floor(Math.random()*n)+1;
+function gen(){const g=S.g;let a,b,t,r;const ops=g<9?["+","-"]:g<10?["+","-","×"]:["+","-","×","²"];const op=ops[rnd(ops.length)-1];
+if(op=="+"){a=rnd(20*(g-6));b=rnd(20*(g-6));r=a+b;t=a+" + "+b}else if(op=="-"){a=rnd(30*(g-6))+20;b=rnd(20);r=a-b;t=a+" − "+b}
+else if(op=="×"){a=rnd(6+g);b=rnd(6+g);r=a*b;t=a+" × "+b}else{a=rnd(9+g);r=a*a;t=a+"²"}
+const s=new Set([r]);while(s.size<4)s.add(r+(rnd(2)==1?1:-1)*rnd(10));return{t,r,o:[...s].sort(()=>Math.random()-.5)}}
+function gstart(){G={sc:0,t:45};gnext();T=setInterval(()=>{G.t--;const e=$("gt");if(e)e.textContent="⏱ "+G.t;if(G.t<=0){clearInterval(T);gend()}},1000)}
+function gnext(){G.q=gen();A.innerHTML=`<div class="top"><span class="pill" id="gt">⏱ ${G.t}</span><span class="pill">⭐ ${G.sc}</span></div><div class="card"><div class="big">${G.q.t} = ?</div></div>`+G.q.o.map(o=>`<button class="opt" style="font-size:20px;text-align:center" onclick="gans(${o})">${o}</button>`).join("")}
+function gans(o){if(o==G.q.r)G.sc++;else G.t=Math.max(0,G.t-2);gnext()}
+function gend(){add(G.sc*3);A.innerHTML=`<div class="big">⚡</div><h1 style="text-align:center">${G.sc} ta to’g’ri</h1><p class="mut" style="text-align:center">+${G.sc*3} XP</p><button class="btn" onclick="gstart()">Yana o’ynash</button><button class="btn alt" onclick="go(0)">Darslarga</button>`}
+function prof(){const w=S.wrong;
+A.innerHTML=head()+`<div class="card"><h2>🧠 Xatolar ustida ishlash</h2>${w.length?`<p class="mut">${w.length} ta savolni qayta yeching. To’g’ri yechsangiz ro’yxatdan o’chadi.</p><button class="btn" onclick="quiz(0,S.wrong.slice(0,5),1)">Qayta yechish</button>`:`<p>Hozircha xato yo’q. Ajoyib! 🎉</p>`}</div>
+<div class="card"><h2>🎯 Maqsad: KAIST</h2><p class="mut">Matematika, fizika, dasturlash va ingliz tilini har kuni mashq qiling. Bakalavr uchun odatda TOEFL/IELTS kerak bo’ladi.</p></div>
+<button class="btn alt" onclick="if(confirm(&quot;Hamma natija o’chadi. Ishonchingiz komilmi?&quot;)){S={xp:0,streak:0,last:&quot;&quot;,g:8,done:{},wrong:[]};save();go(2)}">Natijalarni nolga tushirish</button>`}
+
+// XP do‘koni: XP sarflab o‘yin ichidagi yordamlarni xarid qilish
+function xpShop(){A.innerHTML=head()+`<h2>🛍️ XP do‘koni</h2><div class="card top"><b>🪙 Mavjud XP</b><b>${S.xp} XP</b></div><div class="card shopItem"><div><b>💡 IQ uchun maslahat</b><div class="mut">Bitta savolda kichik ishora olish</div><div class="mut">Sizda: ${S.hints||0} ta</div></div><span class="price">25 XP</span></div><button class="btn" onclick="buyXP('hint')">💡 25 XP ga sotib olish</button><div class="card shopItem"><div><b>⏭️ Savolni o‘tkazish</b><div class="mut">Qiyin IQ savolini javobsiz o‘tkazish</div><div class="mut">Sizda: ${S.skips||0} ta</div></div><span class="price">40 XP</span></div><button class="btn" onclick="buyXP('skip')">⏭️ 40 XP ga sotib olish</button><p class="mut">XP faqat shu ilova ichida ishlatiladi. Xaridlar profilingizda saqlanadi.</p><button class="btn alt" onclick="game()">← O‘yinlarga qaytish</button>`}
+function buyXP(type){const cost=type==='hint'?25:40;if(S.xp<cost){alert('XP yetarli emas. O‘yinlarda XP yig‘ing!');return}S.xp-=cost;if(type==='hint')S.hints=(S.hints||0)+1;else S.skips=(S.skips||0)+1;save();xpShop()}
+
+// Rasmli IQ testi: shakl, ketma-ketlik va sanashga oid 8 ta savol
+const IQ=[
+ {pic:'🔴 🔵 🔴 🔵 ❓',q:'Ketma-ketlikda keyingi belgi qaysi?',o:['🔴','🔵','🟢','🟡'],a:0,h:'Qizil va ko‘k ranglar navbat bilan kelmoqda.',e:'🔴 va 🔵 navbatma-navbat takrorlanadi.'},
+ {pic:'🔺 🔺 🔵 🔺 🔺 🔵 ❓',q:'Keyingi belgi nima bo‘ladi?',o:['🔵','🔺','🟢','⭐'],a:1,h:'Ikki uchburchakdan keyin bitta doira keladi.',e:'Naqsh: 🔺 🔺 🔵. Demak keyingisi 🔺.'},
+ {pic:'🍎 🍎 🍎 🍌 🍌 ❓',q:'Rasm ketma-ketligini davom ettiring.',o:['🍎','🍌','🍇','🍊'],a:1,h:'Avval 3 ta olma, keyin bananlar kelmoqda.',e:'Ushbu naqshda uchta olma va undan keyin bananlar guruhi bor; keyingi meva 🍌.'},
+ {pic:'⭐ ⭐ ⭐ ⭐ ⭐',q:'Rasmda nechta yulduz bor?',o:['4','5','6','7'],a:1,h:'Yulduzlarni bittalab sanang.',e:'Rasmda 5 ta yulduz bor.'},
+ {pic:'🐟 🐟 🐠 🐟',q:'Qaysi belgi boshqalaridan farq qiladi?',o:['1-baliq','2-baliq','3-baliq','4-baliq'],a:2,h:'Uchta baliq bir xil ko‘rinishda.',e:'Uchinchi belgi 🐠, qolganlari 🐟.'},
+ {pic:'🟩 🟩 🟨 🟩 🟩 🟨 ❓',q:'Keyingi rang qaysi?',o:['🟨','🟩','🟥','🟦'],a:1,h:'Ikki yashil kvadratdan keyin sariq kvadrat keladi.',e:'Naqsh 🟩 🟩 🟨 tarzida takrorlanadi. Keyingisi 🟩.'},
+ {pic:'🐶 🐱 🐶 🐱 ❓',q:'Keyingi hayvon qaysi?',o:['🐱','🐶','🐰','🐼'],a:1,h:'It va mushuk navbat bilan keladi.',e:'🐶 va 🐱 almashib keladi, keyingisi 🐶.'},
+ {pic:'🔵 🔵 🔵 🔵 🔵 🔵',q:'Rasmda nechta ko‘k doira bor?',o:['5','6','7','8'],a:1,h:'Doiralarni chapdan o‘ngga sanang.',e:'Jami 6 ta ko‘k doira bor.'}
+];let IQi=0,IQscore=0,IQlocked=false;
+function iqGame(){IQi=0;IQscore=0;IQlocked=false;iqAsk()}
+function iqAsk(){if(IQi>=IQ.length){const earned=IQscore*10;add(earned);A.innerHTML=head()+`<div class="big">🧠🏆</div><h2 style="text-align:center">IQ natijangiz: ${IQscore}/${IQ.length}</h2><p class="mut" style="text-align:center">To‘g‘ri javoblar uchun +${earned} XP</p><button class="btn" onclick="iqGame()">Qayta ishlash</button><button class="btn alt" onclick="xpShop()">XP do‘koniga o‘tish</button><button class="btn alt" onclick="game()">O‘yinlar markazi</button>`;return}IQlocked=false;const q=IQ[IQi];A.innerHTML=head()+`<div class="top"><span class="pill">🧩 IQ savol ${IQi+1}/${IQ.length}</span><span class="pill">⭐ ${IQscore}</span></div><div class="card"><div class="iqPicture">${q.pic}</div><h2>${q.q}</h2></div>`+q.o.map((v,k)=>`<button class="opt" onclick="iqPick(${k})">${String.fromCharCode(65+k)}. ${v}</button>`).join('')+`<div id="iqFeedback"></div><button class="btn alt" onclick="iqHint()">💡 Maslahat (${S.hints||0})</button><button class="btn alt" onclick="game()">← O‘yinlar</button>`}
+function iqHint(){if(!(S.hints>0)){alert('Maslahat olish uchun XP do‘konidan xarid qiling.');return}S.hints--;save();const box=$('iqFeedback');box.innerHTML=`<div class="exp">💡 ${IQ[IQi].h}</div>`;const b=document.querySelectorAll('.opt');b.forEach((el,k)=>{if(k!==IQ[IQi].a)el.style.opacity='.65'});}
+function iqPick(k){if(IQlocked)return;IQlocked=true;const q=IQ[IQi],ok=k===q.a;if(ok)IQscore++;document.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('ok');else if(j===k)b.classList.add('bad')});$('iqFeedback').innerHTML=`<div class="exp">${ok?'🎉 To‘g‘ri!':'💡 To‘g‘ri javob: '+q.o[q.a]}<br>${q.e}</div><button class="btn" onclick="iqNext()">${IQi===IQ.length-1?'Natijani ko‘rish':'Keyingi savol →'}</button><button class="btn alt" onclick="iqSkip()">⏭️ Savolni o‘tkazish (${S.skips||0})</button>`}
+function iqNext(){IQi++;iqAsk()}
+function iqSkip(){if(!(S.skips>0)){alert('O‘tkazish uchun XP do‘konidan xarid qiling.');return}S.skips--;save();IQi++;iqAsk()}
+
+function restoreVideo(){const raw=localStorage.getItem("kaistVideoUrl")||"";const m=raw.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?.*v=|embed\/|shorts\/|live\/))([\w-]{11})/);if(m&&$("videoPlayer"))$("videoPlayer").innerHTML=`<iframe class="videoFrame" src="https://www.youtube-nocookie.com/embed/${m[1]}?rel=0" title="Video dars" allowfullscreen></iframe>`}
+const _lesson=lesson;lesson=function(i){_lesson(i);restoreVideo()};const _cLesson=cLesson;cLesson=function(i,k,s){_cLesson(i,k,s);restoreVideo()};
+go(0);
+</script></body></html>
